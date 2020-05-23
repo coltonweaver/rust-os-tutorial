@@ -16,6 +16,23 @@ pub mod gdt;
 pub fn init() {
     gdt::init();
     interrupts::init_idt();
+    unsafe { interrupts::PICS.lock().initialize() };
+    x86_64::instructions::interrupts::enable();
+}
+
+pub fn hlt_loop() -> ! {
+    loop {
+        x86_64::instructions::hlt();
+    }
+}
+
+#[cfg(test)]
+#[no_mangle]
+pub extern "C" fn _start() -> ! {
+    init();
+    test_main();
+
+    hlt_loop();
 }
 
 pub fn test_runner(tests: &[&dyn Fn()]) {
@@ -30,17 +47,8 @@ pub fn test_panic_handler(_info: &PanicInfo) -> ! {
     serial_println!("[failed]");
     serial_println!("Error: {}", _info);
     exit_qemu(QemuExitCode::Failed);
-
-    loop {}
-}
-
-#[cfg(test)]
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
-    init();
-    test_main();
-
-    loop {}
+    
+    hlt_loop();
 }
 
 #[cfg(test)]
