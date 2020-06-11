@@ -62,7 +62,7 @@ extern "x86-interrupt" fn double_fault_handler(
 }
 
 extern "x86-interrupt" fn timer_interrupt_handler(
-    stack_frame: &mut InterruptStackFrame) 
+    _stack_frame: &mut InterruptStackFrame) 
 {
     //print!(".");
 
@@ -73,7 +73,7 @@ extern "x86-interrupt" fn timer_interrupt_handler(
 }
 
 extern "x86-interrupt" fn keyboard_interrupt_handler(
-    stack_frame: &mut InterruptStackFrame) 
+    _stack_frame: &mut InterruptStackFrame) 
 {
     use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
     use spin::Mutex;
