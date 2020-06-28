@@ -1,0 +1,24 @@
+name: Rust
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install xbuild
+      run: cargo install cargo-xbuild
+    - name: Build OS
+      run: cargo xbuild --verbose
+    - name: Run all tests
+      run: cargo xtest --verbose
