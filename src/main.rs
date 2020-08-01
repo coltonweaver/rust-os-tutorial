@@ -7,7 +7,7 @@
 extern crate alloc;
 
 use core::panic::PanicInfo;
-use rust_os_tutorial::println;
+use rust_os_tutorial::{println, task::{Task, keyboard, executor::Executor}};
 use bootloader::{BootInfo, entry_point};
 use alloc::{boxed::Box, vec, vec::Vec, rc::Rc};
 
@@ -49,11 +49,24 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     core::mem::drop(reference_counted);
     println!("reference count is {} now", Rc::strong_count(&cloned_reference));
 
+    let mut executor = Executor::new();
+    executor.spawn(Task::new(example_task()));
+    executor.spawn(Task::new(keyboard::print_keypresses()));
+    executor.run();
+
     #[cfg(test)]
     test_main();
+}
 
-    println!("It did not crash!");
-    rust_os_tutorial::hlt_loop();
+// These are example functions to demonstrate async functionality.
+
+async fn async_number() -> u32 {
+    42
+}
+
+async fn example_task() {
+    let number = async_number().await;
+    println!("async number: {}", number);
 }
 
 #[cfg(not(test))]
