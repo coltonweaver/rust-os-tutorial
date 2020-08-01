@@ -18,6 +18,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install xbuild
       run: cargo install cargo-xbuild
+    - name: rust-src
+      run: rustup component add rust-src
     - name: Build OS
       run: cargo xbuild --verbose
     - name: Run all tests
